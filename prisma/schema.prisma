@@ -1,0 +1,111 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  reviews          Review[]
+  savedColleges    SavedCollege[]
+  savedComparisons SavedComparison[]
+
+  @@map("users")
+}
+
+model College {
+  id              Int      @id @default(autoincrement())
+  name            String
+  location        String
+  feesPerYear     Int      // in INR
+  rating          Float
+  description     String
+  establishedYear Int
+  imageUrl        String?
+  type            String   @default("Private") // "IIT" | "NIT" | "Private" | "Deemed" | "Government"
+  createdAt       DateTime @default(now())
+
+  courses    Course[]
+  placements Placement[]
+  reviews    Review[]
+  savedBy    SavedCollege[]
+
+  @@map("colleges")
+}
+
+model Course {
+  id            Int     @id @default(autoincrement())
+  collegeId     Int
+  name          String
+  durationYears Int
+  feesPerYear   Int     // in INR
+
+  college College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+
+  @@map("courses")
+}
+
+model Placement {
+  id             Int   @id @default(autoincrement())
+  collegeId      Int
+  year           Int
+  avgPackage     Int   // in LPA (lakhs per annum), stored as integer (e.g. 1200000 = 12 LPA)
+  highestPackage Int   // in LPA
+  placementRate  Float // 0.0 – 1.0
+
+  college College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+
+  @@unique([collegeId, year])
+  @@map("placements")
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  collegeId Int
+  userId    Int
+  rating    Float    // 1.0 – 5.0
+  comment   String
+  createdAt DateTime @default(now())
+
+  college College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([collegeId, userId]) // one review per user per college
+  @@map("reviews")
+}
+
+model SavedCollege {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  collegeId Int
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  college College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, collegeId]) // idempotent saves
+  @@map("saved_colleges")
+}
+
+model SavedComparison {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  collegeIds Json     // stored as [id1, id2, id3] — JSON array
+  label      String?  // optional user label
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("saved_comparisons")
+}

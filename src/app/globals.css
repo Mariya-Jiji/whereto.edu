@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base resets ──────────────────────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #FAF8F4;
+    color: #4A5268;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Focus visible — amber ring on all interactive elements */
+  :focus-visible {
+    outline: 2px solid #E8A33D;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Selection */
+  ::selection {
+    background-color: rgba(232, 163, 61, 0.2);
+    color: #1E2A4A;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-inter), system-ui, sans-serif;
+    color: #1E2A4A;
+    font-weight: 600;
+  }
+}
+
+/* ── Utility classes ─────────────────────────────────────────────────────── */
+@layer components {
+  /* Typography */
+  .font-headline {
+    font-family: var(--font-lora), Georgia, serif;
+    color: #1E2A4A;
+  }
+
+  .font-mono-data {
+    font-family: var(--font-ibm-plex-mono), Menlo, monospace;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-white rounded-card shadow-card border border-slate-border/50 transition-shadow duration-200;
+  }
+
+  .card:hover {
+    @apply shadow-card-hover;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 
+           bg-indigo-primary text-white font-inter font-medium text-body rounded-lg
+           transition-all duration-150 hover:bg-indigo-light active:scale-[0.98]
+           focus-visible:outline-2 focus-visible:outline-amber-accent disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-amber {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5
+           bg-amber-accent text-indigo-primary font-inter font-semibold text-body rounded-lg
+           transition-all duration-150 hover:bg-amber-light active:scale-[0.98]
+           focus-visible:outline-2 focus-visible:outline-indigo-primary disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2
+           text-slate-body font-inter font-medium text-body rounded-lg
+           transition-all duration-150 hover:bg-surface-muted active:scale-[0.98]
+           focus-visible:outline-2 focus-visible:outline-amber-accent;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2
+           border border-slate-border text-slate-body font-inter font-medium text-body rounded-lg
+           transition-all duration-150 hover:border-indigo-primary hover:text-indigo-primary hover:bg-indigo-primary/5
+           focus-visible:outline-2 focus-visible:outline-amber-accent;
+  }
+
+  /* Form inputs */
+  .input {
+    @apply w-full px-3 py-2.5 bg-white border border-slate-border rounded-lg
+           font-inter text-body text-indigo-primary placeholder:text-slate-light
+           transition-all duration-150
+           focus:outline-none focus:border-indigo-primary focus:ring-2 focus:ring-indigo-primary/10;
+  }
+
+  .label {
+    @apply block text-caption font-medium text-slate-body mb-1.5 uppercase tracking-wide;
+  }
+
+  /* Badges */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-caption font-medium;
+  }
+
+  .badge-indigo {
+    @apply badge bg-indigo-primary/10 text-indigo-primary;
+  }
+
+  .badge-amber {
+    @apply badge bg-amber-pale text-amber-accent;
+  }
+
+  .badge-green {
+    @apply badge bg-green-placement/10 text-green-placement;
+  }
+
+  .badge-slate {
+    @apply badge bg-slate-border/40 text-slate-body;
+  }
+
+  /* Divider */
+  .divider {
+    @apply border-t border-slate-border/60;
+  }
+
+  /* Section heading */
+  .section-heading {
+    @apply text-heading-lg font-headline text-indigo-primary mb-1;
+  }
+
+  /* Stat card for detail / compare */
+  .stat-card {
+    @apply card p-4 flex flex-col gap-1;
+  }
+
+  .stat-label {
+    @apply text-caption text-slate-light uppercase tracking-wide font-medium;
+  }
+
+  .stat-value {
+    @apply font-mono-data text-mono-lg font-semibold text-indigo-primary;
+  }
+}
+
+/* ── Compare tray ─────────────────────────────────────────────────────────── */
+.compare-tray {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  animation: slide-up 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── Skeleton shimmer ─────────────────────────────────────────────────────── */
+.skeleton {
+  @apply bg-slate-border/40 rounded animate-skeleton;
+}
+
+/* ── Scrollbar styling ────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #4A5268;
+}
