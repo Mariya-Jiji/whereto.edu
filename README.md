@@ -1,4 +1,4 @@
-# CollegeDisc — College Discovery Platform
+# Whereto.edu — College Discovery Platform
 
 A full-stack MVP for discovering, comparing, and shortlisting premier Indian colleges. Built as part of the Full Stack Engineer Track B assignment.
 
@@ -214,5 +214,6 @@ npm run dev
 - **Private**: RVCE, PES, SRM, Amity, Thapar, Chandigarh, KIIT
 
 Each college has 2–3 courses and 1–2 years of placement data.
-#   w h e r e t o . e d u  
+#   w h e r e t o . e d u 
+ 
  
