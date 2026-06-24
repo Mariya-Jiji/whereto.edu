@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireUserId, UnauthorizedError } from "@/lib/auth-helpers";
 import { z } from "zod";
@@ -37,8 +37,11 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  let userId: number | undefined;
+  let collegeId: number | undefined;
+
   try {
-    const userId = await requireUserId();
+    userId = await requireUserId();
     const body = await request.json();
 
     const parsed = saveSchema.safeParse(body);
@@ -49,19 +52,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { collegeId } = parsed.data;
+    collegeId = parsed.data.collegeId;
 
-    // Verify college exists
     const college = await prisma.college.findUnique({ where: { id: collegeId } });
     if (!college) {
       return NextResponse.json({ error: "College not found" }, { status: 404 });
     }
 
-    // Idempotent save — check first to avoid race-condition unique violation
     const existing = await prisma.savedCollege.findUnique({
       where: { userId_collegeId: { userId, collegeId } },
     });
-
     const saved = existing ?? await prisma.savedCollege.create({
       data: { userId, collegeId },
     });
@@ -69,8 +69,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ data: saved });
   } catch (error) {
     if (error instanceof UnauthorizedError) return error.response;
-    // Handle duplicate key gracefully (e.g. concurrent requests)
-    if ((error as { code?: string }).code === "P2002") {
+    if ((error as { code?: string }).code === "P2002" && userId !== undefined && collegeId !== undefined) {
       return NextResponse.json({ data: { userId, collegeId } });
     }
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
